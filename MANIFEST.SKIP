@@ -7,4 +7,4 @@
 ^Makefile$
 ^MANIFEST.*
 ^MYMETA.*
-^Mojolicious-Plugin-MediaQuery
+^Mojolicious-Plugin-Responsinator

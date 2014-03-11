@@ -1,4 +1,4 @@
 use Mojolicious::Lite;
-plugin "MediaQuery";
+plugin "Responsinator";
 get "/" => sub { shift->render(text => "test\n") };
 app->start;

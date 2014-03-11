@@ -1,1 +1,1 @@
-lib/Mojolicious/Plugin/MediaQuery.pm
+lib/Mojolicious/Plugin/Responsinator.pm

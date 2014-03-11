@@ -1,8 +1,8 @@
-package Mojolicious::Plugin::MediaQuery;
+package Mojolicious::Plugin::Responsinator;
 
 =head1 NAME
 
-Mojolicious::Plugin::MediaQuery - Simulate media queries
+Mojolicious::Plugin::Responsinator - Simulate screen sizes
 
 =head1 VERSION
 
@@ -13,21 +13,29 @@ Mojolicious::Plugin::MediaQuery - Simulate media queries
 This module allow you to embed a given web page inside an iframe, to see
 how it would look on different screens.
 
+This is probably just a module you want to use while developing, and not
+bundle it with the final application. Example usage:
+
+  sub startup {
+    my $self = shift;
+    $self->plugin("responsinator") if $ENV{ENABLE_RESPONSINATOR};
+  }
+
 =head1 SYNOPSIS
 
 You need to enable the plugin in your L<Mojolicious> application:
 
   use Mojolicious::Lite;
-  plugin "MediaQuery";
+  plugin "responsinator";
   get "/" => sub { shift->render(text => "test\n") };
   app->start;
 
-The from the browser, you can ask for an URL with the "_mq" param to embed a
+Then from the browser, you can ask for an URL with the "_size" param to embed a
 website inside an iframe. Example:
 
-  http://localhost:3000/some/path?_mq=iphone   # iphone portrait
-  http://localhost:3000/some/path?_mq=r:iphone # iphone landscape
-  http://localhost:3000/some/path?_mq=100x400  # width: 100px; height: 400px
+  http://localhost:3000/some/path?_size=iphone   # iphone portrait
+  http://localhost:3000/some/path?_size=r:iphone # iphone landscape
+  http://localhost:3000/some/path?_size=100x400  # width: 100px; height: 400px
 
 =cut
 
@@ -64,20 +72,21 @@ has presets => sub {
 =head2 register
 
   $self->reqister($app, \%config);
-  $app->plugin(MediaQuery => \%config);
+  $app->plugin(responsinator => \%config);
 
-Will register an "around_dispatch" hook, which will trigger on the C<_mq>
+Will register an "around_dispatch" hook, which will trigger on the C<_size>
 query param. C<%config> can contain:
 
 =over 4
 
 =item * param
 
-Use this to specify another query param than the default "_mq".
+Use this to specify another query param than the default "_size".
 
 =item * presets
 
 This should be a hash-ref with the same format as the attribute L</presets>.
+The presets will be merged with the presets defined in this module.
 
 =back
 
@@ -85,7 +94,7 @@ This should be a hash-ref with the same format as the attribute L</presets>.
 
 sub register {
   my($self, $app, $config) = @_;
-  my $param = $config->{param} || '_mq';
+  my $param = $config->{param} || '_size';
   my %presets = ( %{ $config->{presets} || {} }, %{ $self->presets } );
 
   $app->hook(around_dispatch => sub {
