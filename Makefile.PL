@@ -6,10 +6,10 @@ WriteMakefile(
   AUTHOR => 'Jan Henning Thorsen <jhthorsen@cpan.org>',
   LICENSE => 'perl',
   PREREQ_PM => {
-
+    'Mojolicious' => '4.87',
   },
   BUILD_REQUIRES => {
-
+    'Test::More' => '0.90',
   },
   META_MERGE => {
     resources => {
