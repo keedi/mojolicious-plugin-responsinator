@@ -5,7 +5,7 @@ VERSION
     0.01
 
 DESCRIPTION
-    This module allow you to embed a given web page inside an iframe, to see
+    This module allow you to embed a given web page inside an iframe to see
     how it would look on different screens.
 
     This is probably just a module you want to use while developing, and not
@@ -27,19 +27,23 @@ SYNOPSIS
     Then from the browser, you can ask for an URL with the "_size" param to
     embed a website inside an iframe. Example:
 
-      http://localhost:3000/some/path?_size=iphone   # iphone portrait
-      http://localhost:3000/some/path?_size=r:iphone # iphone landscape
-      http://localhost:3000/some/path?_size=100x400  # width: 100px; height: 400px
+      http://localhost:3000/some/path?_size=iphone          # iphone landscape
+      http://localhost:3000/some/path?_size=iphone:portrait # iphone portrait
+      http://localhost:3000/some/path?_size=100x400         # width: 100px; height: 400px
 
-ATTRIBUTES
-  presets
-    Defined presets:
+PREDEFINED SIZES
+    You can replace "iphone" in the example above with any of the predefined
+    sizes below:
 
-      desktop: 992x
-      ipad:    1024x768
-      iphone:  320x480
-      large:   1200x
-      tablet:  768x
+    *   iphone
+
+    *   iphone-5
+
+    *   ipad
+
+    *   wildfire
+
+    *   nexus-4
 
 METHODS
   register
@@ -53,11 +57,13 @@ METHODS
 
         Use this to specify another query param than the default "_size".
 
-    *   presets
+COPYRIGHT
+  Images
+    The images are provided by the The Responsinator Team,
+    <http://www.responsinator.com>.
 
-        This should be a hash-ref with the same format as the attribute
-        "presets". The presets will be merged with the presets defined in
-        this module.
+  Code
+    The code is written by Jan Henning Thorsen, <http://thorsen.pm>.
 
 AUTHOR
     Jan Henning Thorsen - "jhthorsen@cpan.org"

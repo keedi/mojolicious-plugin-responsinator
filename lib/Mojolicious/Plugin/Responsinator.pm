@@ -10,7 +10,7 @@ Mojolicious::Plugin::Responsinator - Simulate screen sizes
 
 =head1 DESCRIPTION
 
-This module allow you to embed a given web page inside an iframe, to see
+This module allow you to embed a given web page inside an iframe to see
 how it would look on different screens.
 
 This is probably just a module you want to use while developing, and not
@@ -33,39 +33,35 @@ You need to enable the plugin in your L<Mojolicious> application:
 Then from the browser, you can ask for an URL with the "_size" param to embed a
 website inside an iframe. Example:
 
-  http://localhost:3000/some/path?_size=iphone   # iphone portrait
-  http://localhost:3000/some/path?_size=r:iphone # iphone landscape
-  http://localhost:3000/some/path?_size=100x400  # width: 100px; height: 400px
+  http://localhost:3000/some/path?_size=iphone          # iphone landscape
+  http://localhost:3000/some/path?_size=iphone:portrait # iphone portrait
+  http://localhost:3000/some/path?_size=100x400         # width: 100px; height: 400px
+
+=head1 PREDEFINED SIZES
+
+You can replace "iphone" in the example above with any of the predefined sizes
+below:
+
+=over 4
+
+=item * iphone
+
+=item * iphone-5
+
+=item * ipad
+
+=item * wildfire
+
+=item * nexus-4
+
+=back
 
 =cut
 
 use Mojo::Base 'Mojolicious::Plugin';
+use Cwd;
 
 our $VERSION = '0.01';
-
-=head1 ATTRIBUTES
-
-=head2 presets
-
-Defined presets:
-
-  desktop: 992x
-  ipad:    1024x768
-  iphone:  320x480
-  large:   1200x
-  tablet:  768x
-
-=cut
-
-has presets => sub {
-  return {
-    desktop => '992x',
-    ipad => '1024x768',
-    iphone => '320x480',
-    large => '1200x',
-    tablet => '768x',
-  };
-};
 
 =head1 METHODS
 
@@ -83,46 +79,52 @@ query param. C<%config> can contain:
 
 Use this to specify another query param than the default "_size".
 
-=item * presets
-
-This should be a hash-ref with the same format as the attribute L</presets>.
-The presets will be merged with the presets defined in this module.
-
 =back
 
 =cut
 
 sub register {
   my($self, $app, $config) = @_;
-  my $param = $config->{param} || '_size';
-  my %presets = ( %{ $config->{presets} || {} }, %{ $self->presets } );
+  my $param_name = $config->{param} || '_size';
+
+  push @{ $app->static->paths }, $self->_asset_path;
+  push @{ $app->renderer->paths }, $self->_asset_path;
 
   $app->hook(around_dispatch => sub {
     my($next, $c) = @_;
-    my $size = $c->param($param) or return $next->();
-    my $url = $c->req->url->to_abs;
-    my($rotate, $height, $width);
+    my $size = $c->param($param_name) or return $next->();
+    my $frame_url = $c->req->url->to_abs;
+    my $orientation = $size =~ s!:(landscape|portrait)$!! ? $1 : 'landscape';
+    my @size = $size =~ /^(\d*)x(\d*)$/;
 
-    $rotate = $size =~ s!^r:!!;
-    $size = $presets{$size} if $presets{$size};
-    $size =~ /^(\d*)x(\d*)$/ or return $next->();
-    $width = $1 ? "${1}px" : "100%";
-    $height = $2 ? "${2}px" : "100%";
-    ($width, $height) = ($height, $width) if $rotate;
-    $url->query->remove($param); # make sure it does not recurse
-
+    $frame_url->query->remove($param_name); # make sure it does not recurse
     $c->render(
-      text => <<"      HTML",
-<html style="width:100%;height:100%;padding:0;margin:0;">
-<head><title>width:$width; height:$height;</title></head>
-<body style="width:100%;height:100%;padding:0;margin:0;background:#333;">
-<iframe style="width:$width;height:$height;background: #fff;border:0;" src="$url"></iframe>
-</body>
-</html>
-      HTML
+      template => 'responsinator',
+      identifier => $size,
+      orientation => $orientation,
+      frame_url => $frame_url,
+      param_name => $param_name,
+      width => $size[0] ? "$size[0]px" : 0,
+      height => $size[1] ? "$size[1]px" : 0,
     );
   });
 }
+
+sub _asset_path {
+  my $asset_path = Cwd::abs_path(__FILE__);
+  $asset_path =~ s!\.pm$!!;
+  $asset_path;
+}
+
+=head1 COPYRIGHT
+
+=head2 Images
+
+The images are provided by the The Responsinator Team, L<http://www.responsinator.com>.
+
+=head2 Code
+
+The code is written by Jan Henning Thorsen, L<http://thorsen.pm>.
 
 =head1 AUTHOR
 
