@@ -26,12 +26,21 @@
   %= javascript begin
 ;(function(d, l) {
   var param_name = '<%= $param_name %>';
+  var iframe = document.getElementsByTagName('iframe')[0];
   var data = l.href.match(new RegExp(param_name + '=([^&]+)'))[1].split(':');
   var go = function() { l.assign(l.href.replace(new RegExp(param_name + '=([^&]+)'), param_name + '=' + data.join(':'))); };
   d.getElementById('select_identifier').onchange = function() { data[0] = this.value; go(); };
   d.getElementById('select_orientation').onchange = function() { data[1] = this.value; go(); };
+
+  document.body.style.overflow = 'hidden';
+  var scrollbar_width = document.body.clientWidth;
+  document.body.style.overflow = 'scroll';
+  scrollbar_width -= document.body.clientWidth;
+  if(!scrollbar_width) scrollbar_width = document.body.offsetWidth - document.body.clientWidth;
+  document.body.style.overflow = '';
+  window.scrollbar_width = scrollbar_width;
+  iframe.style.width = iframe.offsetWidth + scrollbar_width + 'px';
 })(document, location);
   % end
 </body>
 </html>
- 

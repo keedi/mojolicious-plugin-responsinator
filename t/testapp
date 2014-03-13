@@ -1,4 +1,4 @@
 use Mojolicious::Lite;
 plugin "Responsinator";
-get "/" => sub { shift->render(text => "test\n") };
+get "/" => sub { shift->render(text => "test<br>\n" x 40) };
 app->start;
