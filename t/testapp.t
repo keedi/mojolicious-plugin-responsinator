@@ -6,7 +6,6 @@ use Test::Mojo;
   use Mojolicious::Lite;
   plugin "Responsinator";
   get "/" => sub { shift->render(text => "test\n") };
-  app->start;
 }
 
 my $t = Test::Mojo->new;
