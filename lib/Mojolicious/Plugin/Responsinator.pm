@@ -6,7 +6,7 @@ Mojolicious::Plugin::Responsinator - Simulate screen sizes
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 DESCRIPTION
 
@@ -61,7 +61,7 @@ below:
 use Mojo::Base 'Mojolicious::Plugin';
 use Cwd;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 METHODS
 
@@ -99,13 +99,14 @@ sub register {
 
     $frame_url->query->remove($param_name); # make sure it does not recurse
     $c->render(
+      layout => $config->{layout} || undef,
       template => 'responsinator',
+      frame_url => $frame_url,
       identifier => $size,
       orientation => $orientation,
-      frame_url => $frame_url,
       param_name => $param_name,
-      width => $size[0] ? "$size[0]px" : 0,
       height => $size[1] ? "$size[1]px" : 0,
+      width => $size[0] ? "$size[0]px" : 0,
     );
   });
 }

@@ -2,7 +2,7 @@ NAME
     Mojolicious::Plugin::Responsinator - Simulate screen sizes
 
 VERSION
-    0.01
+    0.02
 
 DESCRIPTION
     This module allow you to embed a given web page inside an iframe to see
