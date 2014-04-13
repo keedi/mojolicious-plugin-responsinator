@@ -6,7 +6,7 @@ Mojolicious::Plugin::Responsinator - Simulate screen sizes
 
 =head1 VERSION
 
-0.02
+0.03
 
 =head1 DESCRIPTION
 
@@ -61,7 +61,7 @@ below:
 use Mojo::Base 'Mojolicious::Plugin';
 use Cwd;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 METHODS
 
